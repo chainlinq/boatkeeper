@@ -14,8 +14,8 @@
  * for the specific language governing permissions and limitations 
  * under the License.
  */
-#ifndef AI_BOATKEEPERPI_H_
-#define AI_BOATKEEPERPI_H_
+#ifndef AI_BOATKEEPER_PI_H_
+#define AI_BOATKEEPER_PI_H_
 
 // Serial number on a Raspberry Pi is stored in the 'cpuinfo' file and 
 // is 16 chars long
@@ -25,4 +25,4 @@
 
 const char * read_serial_number ();
 
-#endif /* AI_RASPBERRYPI_H */
+#endif /* AI_BOATKEEPER_PI_H */

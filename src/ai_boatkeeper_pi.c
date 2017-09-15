@@ -22,7 +22,7 @@
 
 #include "aws_iot_log.h"
 
-#include "ai_boatkeeperpi.h"
+#include "ai_boatkeeper_pi.h"
 
 char g_serial_number[SERIAL_NUMBER_LENGTH] = DUMMY_SERIAL_NUMBER;
 

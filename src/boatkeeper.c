@@ -42,7 +42,7 @@
 #include "aws_iot_mqtt_client_interface.h"
 
 #include "ai_aws_iot.h"
-#include "ai_boatkeeperpi.h"
+#include "ai_boatkeeper_pi.h"
 
 /**
  * This parameter will avoid infinite loop of publish and exit the program after certain number of publishes
@@ -61,14 +61,14 @@ int main(int argc, char **argv)
   IoT_Error_t rc = FAILURE;
 
   const char * p_serial_number = read_serial_number();
+  IOT_INFO("Serial Number = %s", p_serial_number);
 
   IOT_INFO("\nAWS IoT SDK Version %d.%d.%d-%s\n", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, VERSION_TAG);
 
   AWS_IoT_Client client;
   IoT_Client_Init_Params mqtt_init_params = iotClientInitParamsDefault;
 
-  init_mqtt_params(argc, argv, &mqtt_init_params);
-  rc = aws_iot_mqtt_init(&client, &mqtt_init_params);
+  rc = init_mqtt(argc, argv, &client, &mqtt_init_params);
 
   if (SUCCESS != rc) 
   {
@@ -81,8 +81,7 @@ int main(int argc, char **argv)
 
   IoT_Publish_Message_Params paramsQOS1;
 
-  init_client_connect_params( &connect_params);
-  rc = aws_iot_mqtt_connect(&client, &connect_params);
+  rc = mqtt_connect( &client, &connect_params, p_serial_number);
   
   if (SUCCESS != rc) 
   {
@@ -111,11 +110,7 @@ int main(int argc, char **argv)
   return rc;
   }
   */
-  sprintf(payload, "%s : %d ", "hello from SDK", i);
-
-  paramsQOS0.qos = QOS0;
-  paramsQOS0.payload = (void *) payload;
-  paramsQOS0.isRetained = 0;
+  sprintf(payload, "%s : %s, %s : %d ", "hello from Pi ", p_serial_number, "SDK", i);
 
   paramsQOS1.qos = QOS1;
   paramsQOS1.payload = (void *) payload;
@@ -139,16 +134,7 @@ int main(int argc, char **argv)
 
     IOT_INFO("-->sleep");
     sleep(1);
-    sprintf(payload, "%s : %d ", "hello from SDK QOS0", i++);
-    paramsQOS0.payloadLen = strlen(payload);
-    rc = aws_iot_mqtt_publish(&client, "sdkTest/sub", 11, &paramsQOS0);
 
-    if(g_publish_count > 0) 
-    {
-      g_publish_count--;
-    }
-
-    sprintf(payload, "%s : %d ", "hello from SDK QOS1", i++);
     paramsQOS1.payloadLen = strlen(payload);
     rc = aws_iot_mqtt_publish(&client, "sdkTest/sub", 11, &paramsQOS1);
 

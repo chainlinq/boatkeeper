@@ -141,9 +141,9 @@ void parse_input_args_for_connect_params(int argc, char **argv)
   }
 }
 
-IOT_ERROR_t init_mqtt (AWS_IOT_Client * p_client, IoT_Client_Init_Params * p_mqtt_init_params)
+IoT_Error_t init_mqtt (int argc, char **argv, AWS_IoT_Client * p_client, IoT_Client_Init_Params * p_mqtt_init_params)
 {
-  IOT_Error_t rc = FAILURE;
+  IoT_Error_t rc = FAILURE;
 
   char root_CA[PATH_MAX + 1];
   char client_CRT[PATH_MAX + 1];
@@ -173,14 +173,14 @@ IOT_ERROR_t init_mqtt (AWS_IOT_Client * p_client, IoT_Client_Init_Params * p_mqt
   p_mqtt_init_params->disconnectHandler = disconnect_callback_handler;
   p_mqtt_init_params->disconnectHandlerData = NULL;
 
-  rc = aws_iot_mqtt_init( p_client, p_mqttInitParams);
+  rc = aws_iot_mqtt_init( p_client, p_mqtt_init_params);
 
   return rc;
 }
 
-IOT_ERROR_t mqtt_connect (AWS_IoT_Client * p_client, IoT_Client_Connect_Params * p_connect_params, const char * p_serial_number) 
+IoT_Error_t mqtt_connect (AWS_IoT_Client * p_client, IoT_Client_Connect_Params * p_connect_params, const char * p_serial_number) 
 {
-  IOT_Error_t rc = FAILURE;
+  IoT_Error_t rc = FAILURE;
 
   p_connect_params->keepAliveIntervalInSec = 10;
   p_connect_params->isCleanSession = true;
@@ -191,7 +191,7 @@ IOT_ERROR_t mqtt_connect (AWS_IoT_Client * p_client, IoT_Client_Connect_Params *
 
   IOT_INFO("Connecting");
 
-  rc = aws_iot_connect(p_client, p_connect_params);
+  rc = aws_iot_mqtt_connect(p_client, p_connect_params);
 
   return rc;
 }

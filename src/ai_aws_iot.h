@@ -23,8 +23,8 @@ void subscribe_callback_handler (AWS_IoT_Client * p_client, char * p_topic_name,
 void disconnect_callback_handler (AWS_IoT_Client * p_client, void * p_data); 
 void parse_input_args_for_connect_params(int argc, char **argv); 
 
-IOT_ERROR_t init_mqtt (AWS_IOT_Client * p_client, IoT_Client_Init_Params * p_mqtt_init_params);
-IOT_ERROR_t mqtt_connect (AWS_IoT_Client * p_client, IoT_Client_Connect_Params * p_connect_params, const char * p_serial_number); 
+IoT_Error_t init_mqtt (int argc, char **argv, AWS_IoT_Client * p_client, IoT_Client_Init_Params * p_mqtt_init_params);
+IoT_Error_t mqtt_connect (AWS_IoT_Client * p_client, IoT_Client_Connect_Params * p_connect_params, const char * p_serial_number); 
 IoT_Error_t mqtt_publish (AWS_IoT_Client *p_client, QoS qos, const char *p_payload, const char *p_topic_name, uint16_t topic_name_len);
 
 #endif /* AI_AWS_IOT_H_ */
