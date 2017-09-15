@@ -18,8 +18,8 @@
  * @brief AWS IoT specific configuration file
  */
 
-#ifndef SRC_SHADOW_IOT_SHADOW_CONFIG_H_
-#define SRC_SHADOW_IOT_SHADOW_CONFIG_H_
+#ifndef AWS_IOT_CONFIG_H_
+#define AWS_IOT_CONFIG_H_
 
 // Get from console
 // =================================================

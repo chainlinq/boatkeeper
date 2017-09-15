@@ -9,12 +9,12 @@
  * You may not use this file except in compliance with the License.
  * A copy of the License is located at
  *
- *  http://aws.amazon.com/apache2.0
+ *  https://github.com/chainlinq/boatkeeper/blob/master/LICENSE
  *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES 
+ * OR CONDITIONS OF ANY KIND, either express or implied. See the License 
+ * for the specific language governing permissions and limitations 
+ * under the License.
  */
 
 #include <stdio.h>
@@ -141,8 +141,10 @@ void parse_input_args_for_connect_params(int argc, char **argv)
   }
 }
 
-void init_mqtt_params (int argc, char **argv, IoT_Client_Init_Params * p_mqtt_init_params)
+IOT_ERROR_t init_mqtt (AWS_IOT_Client * p_client, IoT_Client_Init_Params * p_mqtt_init_params)
 {
+  IOT_Error_t rc = FAILURE;
+
   char root_CA[PATH_MAX + 1];
   char client_CRT[PATH_MAX + 1];
   char client_key[PATH_MAX + 1];
@@ -158,6 +160,7 @@ void init_mqtt_params (int argc, char **argv, IoT_Client_Init_Params * p_mqtt_in
   IOT_DEBUG("root_CA %s", root_CA);
   IOT_DEBUG("client_CRT %s", client_CRT);
   IOT_DEBUG("client_key %s", client_key);
+  
   p_mqtt_init_params->enableAutoReconnect = false; // We enable this later below
   p_mqtt_init_params->pHostURL = g_host_address;
   p_mqtt_init_params->port = g_port;
@@ -169,15 +172,45 @@ void init_mqtt_params (int argc, char **argv, IoT_Client_Init_Params * p_mqtt_in
   p_mqtt_init_params->isSSLHostnameVerify = true;
   p_mqtt_init_params->disconnectHandler = disconnect_callback_handler;
   p_mqtt_init_params->disconnectHandlerData = NULL;
+
+  rc = aws_iot_mqtt_init( p_client, p_mqttInitParams);
+
+  return rc;
 }
 
-void init_client_connect_params (IoT_Client_Connect_Params * p_connect_params) 
+IOT_ERROR_t mqtt_connect (AWS_IoT_Client * p_client, IoT_Client_Connect_Params * p_connect_params, const char * p_serial_number) 
 {
+  IOT_Error_t rc = FAILURE;
+
   p_connect_params->keepAliveIntervalInSec = 10;
   p_connect_params->isCleanSession = true;
   p_connect_params->MQTTVersion = MQTT_3_1_1;
-  p_connect_params->pClientID = AWS_IOT_MQTT_CLIENT_ID;
-  p_connect_params->clientIDLen = (uint16_t) strlen(AWS_IOT_MQTT_CLIENT_ID);
+  p_connect_params->pClientID = p_serial_number;
+  p_connect_params->clientIDLen = (uint16_t) strlen(p_serial_number);
   p_connect_params->isWillMsgPresent = false;
+
+  IOT_INFO("Connecting");
+
+  rc = aws_iot_connect(p_client, p_connect_params);
+
+  return rc;
+}
+
+//TODO: do  not pass topic_name_len, use strlen to determine it
+IoT_Error_t mqtt_publish (AWS_IoT_Client *p_client, QoS qos, const char *p_payload, const char *p_topic_name, uint16_t topic_name_len)
+{
+  IoT_Error_t rc = FAILURE;
+
+  IoT_Publish_Message_Params params;
+  
+  params.qos = qos;
+  params.payload = (void *) p_payload;
+  params.isRetained = 0;
+  params.payloadLen = strlen(p_payload);
+
+  IOT_INFO("Publishing %s", p_topic_name);
+  rc = aws_iot_mqtt_publish( p_client, p_topic_name, topic_name_len, &params);
+                    
+  return rc;
 }
 

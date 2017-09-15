@@ -13,7 +13,7 @@ APP_NAME = boatkeeper
 APP_SRC_FILES = $(APP_NAME).c
 APP_SRC_FILES += ai_power_sensor.c
 APP_SRC_FILES += ai_aws_iot.c
-
+APP_SRC_FILES += ai_boatkeeperpi.c
 
 #IoT client directory
 IOT_CLIENT_DIR = ../linux_mqtt_mbedtls-2.1.1/

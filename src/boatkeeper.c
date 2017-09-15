@@ -1,4 +1,21 @@
 /*
+ * Copyright © 2017 Astonish Inc.  All Rights Reserved.
+ * 
+ * Main source file for Boat Keeper.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  https://github.com/chainlinq/boatkeeper/blob/master/LICENSE
+ *
+ * This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES 
+ * OR CONDITIONS OF ANY KIND, either express or implied. See the License 
+ * for the specific language governing permissions and limitations 
+ * under the License.
+ */
+
+/*
  * Copyright 2010-2015 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
@@ -12,18 +29,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-/**
- * @file subscribe_publish_sample.c
- * @brief simple MQTT publish and subscribe on the same topic
- *
- * This example takes the parameters from the aws_iot_config.h file and establishes a connection to the AWS IoT MQTT Platform.
- * It subscribes and publishes to the same topic - "sdkTest/sub"
- *
- * If all the certs are correct, you should see the messages received by the application in a loop.
- *
- * The application takes in the certificate path, host name , port and the number of times the publish should happen.
- *
- */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
@@ -36,6 +42,7 @@
 #include "aws_iot_mqtt_client_interface.h"
 
 #include "ai_aws_iot.h"
+#include "ai_boatkeeperpi.h"
 
 /**
  * This parameter will avoid infinite loop of publish and exit the program after certain number of publishes
@@ -53,14 +60,12 @@ int main(int argc, char **argv)
 
   IoT_Error_t rc = FAILURE;
 
-  AWS_IoT_Client client;
-  IoT_Client_Init_Params mqtt_init_params = iotClientInitParamsDefault;
-  IoT_Client_Connect_Params connect_params = iotClientConnectParamsDefault;
-
-  IoT_Publish_Message_Params paramsQOS0;
-  IoT_Publish_Message_Params paramsQOS1;
+  const char * p_serial_number = read_serial_number();
 
   IOT_INFO("\nAWS IoT SDK Version %d.%d.%d-%s\n", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, VERSION_TAG);
+
+  AWS_IoT_Client client;
+  IoT_Client_Init_Params mqtt_init_params = iotClientInitParamsDefault;
 
   init_mqtt_params(argc, argv, &mqtt_init_params);
   rc = aws_iot_mqtt_init(&client, &mqtt_init_params);
@@ -72,6 +77,10 @@ int main(int argc, char **argv)
   }
 
   IOT_INFO("Connecting...");
+  IoT_Client_Connect_Params connect_params = iotClientConnectParamsDefault;
+
+  IoT_Publish_Message_Params paramsQOS1;
+
   init_client_connect_params( &connect_params);
   rc = aws_iot_mqtt_connect(&client, &connect_params);
   
