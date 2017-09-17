@@ -19,9 +19,12 @@
 #include <string.h>
 #include <stdbool.h>
 #include <ctype.h>
+#include <time.h>
 
 #include "aws_iot_log.h"
+#include "aws_iot_mqtt_client_interface.h"
 
+#include "ai_aws_iot.h"
 #include "ai_boatkeeper_pi.h"
 
 char g_serial_number[SERIAL_NUMBER_LENGTH] = DUMMY_SERIAL_NUMBER;
@@ -97,4 +100,24 @@ const char * read_serial_number ()
   IOT_INFO("Serial Number - %s", g_serial_number);
   return g_serial_number;
 }
+
+IoT_Error_t publish_shore_power_status (AWS_IoT_Client *p_client, QoS qos)
+{
+  IoT_Error_t result = FAILURE;
+     
+  char payload[100];
+  
+  const char * p_shore_power_status_string = read_shore_power_status_string();
+             
+  time_t raw_time;
+  
+  time(&raw_time);
+  
+  sprintf( payload, "{ \"serial_number\": \"%s\", \"shore_power\": \"%s\", \"timestamp\":\"%ld\" }", g_serial_number, p_shore_power_status_string, raw_time); 
+   
+  result = mqtt_publish ( p_client, qos, payload, AI_BOATKEEPER_STATUS_TOPIC);
+  
+  return result;
+}
+
 

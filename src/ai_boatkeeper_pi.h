@@ -22,7 +22,9 @@
 #define RASPBERRYPI_SERIAL_NUMBER_FILENAME "/proc/cpuinfo"
 #define DUMMY_SERIAL_NUMBER "DUMMY_SERIAL_NUM"
 #define SERIAL_NUMBER_LENGTH 17 // 16 digit serial number plus NULL
+#define AI_BOATKEEPER_STATUS_TOPIC "boatkeeper/status"
 
-const char * read_serial_number ();
+const char * read_serial_number();
+IoT_Error_t publish_shore_power_status (AWS_IoT_Client *p_client, QoS qos);
 
 #endif /* AI_BOATKEEPER_PI_H */

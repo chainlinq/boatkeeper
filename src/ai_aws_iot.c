@@ -178,15 +178,15 @@ IoT_Error_t init_mqtt (int argc, char **argv, AWS_IoT_Client * p_client, IoT_Cli
   return rc;
 }
 
-IoT_Error_t mqtt_connect (AWS_IoT_Client * p_client, IoT_Client_Connect_Params * p_connect_params, const char * p_serial_number) 
+IoT_Error_t mqtt_connect (AWS_IoT_Client * p_client, IoT_Client_Connect_Params * p_connect_params, const char * p_client_id) 
 {
   IoT_Error_t rc = FAILURE;
 
   p_connect_params->keepAliveIntervalInSec = 10;
   p_connect_params->isCleanSession = true;
   p_connect_params->MQTTVersion = MQTT_3_1_1;
-  p_connect_params->pClientID = p_serial_number;
-  p_connect_params->clientIDLen = (uint16_t) strlen(p_serial_number);
+  p_connect_params->pClientID = p_client_id;
+  p_connect_params->clientIDLen = (uint16_t) strlen(p_client_id);
   p_connect_params->isWillMsgPresent = false;
 
   IOT_INFO("Connecting");
@@ -196,8 +196,7 @@ IoT_Error_t mqtt_connect (AWS_IoT_Client * p_client, IoT_Client_Connect_Params *
   return rc;
 }
 
-//TODO: do  not pass topic_name_len, use strlen to determine it
-IoT_Error_t mqtt_publish (AWS_IoT_Client *p_client, QoS qos, const char *p_payload, const char *p_topic_name, uint16_t topic_name_len)
+IoT_Error_t mqtt_publish (AWS_IoT_Client *p_client, QoS qos, const char *p_payload, const char *p_topic_name)
 {
   IoT_Error_t rc = FAILURE;
 
@@ -209,7 +208,7 @@ IoT_Error_t mqtt_publish (AWS_IoT_Client *p_client, QoS qos, const char *p_paylo
   params.payloadLen = strlen(p_payload);
 
   IOT_INFO("Publishing %s", p_topic_name);
-  rc = aws_iot_mqtt_publish( p_client, p_topic_name, topic_name_len, &params);
+  rc = aws_iot_mqtt_publish( p_client, p_topic_name, strlen(p_topic_name), &params);
                     
   return rc;
 }

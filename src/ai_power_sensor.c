@@ -17,29 +17,29 @@
  */
 #include "ai_power_sensor.h"
 
-Power_Status_t m_power_status = power_undefined;
+Power_Status_t g_power_status = power_undefined;
 
-void toggle_power_status ()
+void toggle_shore_power_status ()
 {
-  if (m_power_status == power_on)
+  if (g_power_status == power_on)
   {
-    m_power_status = power_off;
+    g_power_status = power_off;
   }
  
   // If power status is undefined or off, set it to on 
   else
   {
-    m_power_status = power_on;
+    g_power_status = power_on;
   }
 }
 
-Power_Status_t read_power_status ()
+Power_Status_t read_shore_power_status ()
 {
-  return m_power_status;
+  return g_power_status;
 }
 
-const char * read_power_status_string ()
+const char * read_shore_power_status_string ()
 {
-  return m_power_status_strings[m_power_status];
+  return g_power_status_strings[g_power_status];
 }
 

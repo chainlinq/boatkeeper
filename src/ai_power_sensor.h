@@ -25,13 +25,13 @@ typedef enum
   power_on
 } Power_Status_t;
 
-const char * m_power_status_strings[] = {"Undefined", "Off", "On" };
+const char * g_power_status_strings[] = {"Undefined", "Off", "On" };
 
 
 // Forward method declarations
-void toggle_power_status ();
-Power_Status_t read_power_status ();
-const char * read_power_status_string ();
+void toggle_shore_power_status ();
+Power_Status_t read_shore_power_status ();
+const char * read_shore_power_status_string ();
 
 #endif /* AI_POWER_SENSOR_H_ */
 

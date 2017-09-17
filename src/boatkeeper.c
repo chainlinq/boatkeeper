@@ -54,16 +54,13 @@ int main(int argc, char **argv)
 {
   bool infinite_publish_flag = true;
 
-  char payload[100];
-
   int32_t i = 0;
 
   IoT_Error_t rc = FAILURE;
 
-  const char * p_serial_number = read_serial_number();
-  IOT_INFO("Serial Number = %s", p_serial_number);
-
   IOT_INFO("\nAWS IoT SDK Version %d.%d.%d-%s\n", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, VERSION_TAG);
+
+  const char * p_serial_number = read_serial_number();
 
   AWS_IoT_Client client;
   IoT_Client_Init_Params mqtt_init_params = iotClientInitParamsDefault;
@@ -72,14 +69,12 @@ int main(int argc, char **argv)
 
   if (SUCCESS != rc) 
   {
-    IOT_ERROR("aws_iot_mqtt_init returned error : %d ", rc);
+    IOT_ERROR("init_mqtt returned error : %d ", rc);
     return rc;
   }
 
   IOT_INFO("Connecting...");
   IoT_Client_Connect_Params connect_params = iotClientConnectParamsDefault;
-
-  IoT_Publish_Message_Params paramsQOS1;
 
   rc = mqtt_connect( &client, &connect_params, p_serial_number);
   
@@ -110,11 +105,7 @@ int main(int argc, char **argv)
   return rc;
   }
   */
-  sprintf(payload, "%s : %s, %s : %d ", "hello from Pi ", p_serial_number, "SDK", i);
 
-  paramsQOS1.qos = QOS1;
-  paramsQOS1.payload = (void *) payload;
-  paramsQOS1.isRetained = 0;
 
   if (g_publish_count != 0) 
   {
@@ -133,10 +124,9 @@ int main(int argc, char **argv)
     }
 
     IOT_INFO("-->sleep");
-    sleep(1);
+    sleep(10);
 
-    paramsQOS1.payloadLen = strlen(payload);
-    rc = aws_iot_mqtt_publish(&client, "sdkTest/sub", 11, &paramsQOS1);
+    rc = publish_shore_power_status ( &client, QOS1);
 
     if (rc == MQTT_REQUEST_TIMEOUT_ERROR) 
     {
