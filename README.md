@@ -3,9 +3,10 @@
 Provide remote monitoring of a boat using a Raspberry Pi and AWS. Written in Embedded-C.
 
 ## Version
-0.0.0 (Early, early project setup)
+0.0.1 
 
-The current version will connect to your AWS IoT account and publish a test message provide you have set up AWS correctly on the Raspberry Pi.
+This version will connect to your AWS IoT account and publish 2 status messages for shore power. 
+Shore power detection has not been implemented so shore power status is "undefined"  
 
 ## Authors
 
